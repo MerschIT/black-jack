@@ -13,6 +13,10 @@ let puntosComputadora = 0;
 
 // Referencias del HTML
 const btnPedir = document.querySelector("#btnPedir");
+const btnDetener = document.querySelector("#btnDetener");
+
+const divCartasJugador = document.querySelector("#jugador-cartas");
+const divCartasComputadora = document.querySelector("#computadora-cartas");
 
 const puntosHTML = document.querySelectorAll("small");
 
@@ -54,10 +58,30 @@ const valorCarta = (carta) => {
   } else {
     puntos = valor * 1;
   }
-
   return puntos;
 };
 const valor = valorCarta(pedirCarta());
+
+// TURNO DE LA COMPUTADORA
+const turnoComputadora = (puntosMinimos) => {
+  do {
+    const carta = pedirCarta();
+
+    puntosComputadora = puntosComputadora + valorCarta(carta);
+    puntosHTML[1].innerText = puntosComputadora;
+
+    // <img src="assets/cartas/10C.png" alt="carta" class="carta">
+
+    const imgCarta = document.createElement("img");
+    imgCarta.src = `assets/cartas/${carta}.png`;
+    imgCarta.classList.add("carta");
+    divCartasComputadora.append(imgCarta);
+
+    if (puntosMinimos > 21) {
+      break;
+    }
+  } while (puntosComputadora < puntosMinimos && puntosMinimos <= 21);
+};
 
 //EVENTOS
 btnPedir.addEventListener("click", function () {
@@ -65,4 +89,35 @@ btnPedir.addEventListener("click", function () {
 
   puntosJugador = puntosJugador + valorCarta(carta);
   puntosHTML[0].innerText = puntosJugador;
+
+  // <img src="assets/cartas/10C.png" alt="carta" class="carta">
+
+  const imgCarta = document.createElement("img");
+  imgCarta.src = `assets/cartas/${carta}.png`;
+  imgCarta.classList.add("carta");
+  divCartasJugador.append(imgCarta);
+
+  if (puntosJugador > 21) {
+    console.warn("Lo siento, perdiste.");
+    btnPedir.disabled = true;
+    btnDetener.disabled = true;
+
+    turnoComputadora(puntosJugador);
+  } else if (puntosJugador === 21) {
+    console.warn("21, excelente!");
+    btnPedir.disabled = true;
+    btnDetener.disabled = true;
+
+    turnoComputadora(puntosJugador);
+  }
 });
+
+btnDetener.addEventListener("click", function () {
+  btnDetener.disabled = true;
+  btnPedir.disabled = true;
+  turnoComputadora(puntosJugador);
+});
+
+// TODO: Borrar
+console.log(22);
+// turnoComputadora(22);
